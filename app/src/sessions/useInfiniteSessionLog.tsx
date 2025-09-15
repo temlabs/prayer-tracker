@@ -2,11 +2,14 @@ import {
     useInfiniteQuery,
     type UseInfiniteQueryOptions,
     type UseInfiniteQueryResult,
+    type InfiniteData,
 } from '@tanstack/react-query'
 import { getSupabaseBrowserClient } from '~/lib/supabase.client'
 import type { Tables } from '~/types/database.types'
 
 type PrayerSession = Tables<'prayer_sessions'>
+type Member = Tables<'members'>
+export type JoinedSession = PrayerSession & { members: Member | null }
 
 export type InfiniteSessionFilters = {
     equals?: Partial<Pick<PrayerSession, 'member_id' | 'prayer_campaign_id'>>
@@ -28,7 +31,7 @@ export type UseInfiniteSessionLogArgs = {
     pageSize?: number
 }
 
-type Page = PrayerSession[]
+type Page = JoinedSession[]
 
 export function useInfiniteSessionLog(
     args?: UseInfiniteSessionLogArgs,
@@ -36,13 +39,13 @@ export function useInfiniteSessionLog(
         UseInfiniteQueryOptions<
             Page,
             Error,
-            Page,
+            InfiniteData<Page, number>,
             [string, string, number],
             number
         >,
         'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
     >
-): UseInfiniteQueryResult<Page, Error> {
+): UseInfiniteQueryResult<InfiniteData<Page, number>, Error> {
     const pageSize = args?.pageSize ?? 50
     const filters = args?.filters
 
@@ -67,7 +70,7 @@ export function useInfiniteSessionLog(
     return useInfiniteQuery<
         Page,
         Error,
-        Page,
+        InfiniteData<Page, number>,
         [string, string, number],
         number
     >({
@@ -77,7 +80,7 @@ export function useInfiniteSessionLog(
             lastPage.length === pageSize ? lastOffset + pageSize : undefined,
         queryFn: async ({ pageParam }) => {
             const supabase = getSupabaseBrowserClient()
-            let query = supabase.from('prayer_sessions').select('*')
+            let query = supabase.from('prayer_sessions').select('*, members(*)')
 
             if (filters?.equals) {
                 for (const [key, value] of Object.entries(filters.equals)) {

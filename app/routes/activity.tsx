@@ -5,6 +5,7 @@ import { SessionRow } from '~/src/sessions/components/sessionRow/SessionRow'
 import { useInfiniteSessionLog } from '~/src/sessions/useInfiniteSessionLog'
 import { useFetchMembers } from '~/src/member/useFetchMembers'
 import { useFetchPrayerCampaigns } from '~/src/campaign/useFetchPrayerCampaigns'
+import type { Tables } from '~/types/database.types'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Activity Log' }]
 
@@ -73,9 +74,12 @@ export default function Activity() {
     const { data, hasNextPage, fetchNextPage, isFetchingNextPage, status } =
         useInfiniteSessionLog({ filters, pageSize: 50 })
 
-    const rows = (
-        (data as unknown as { pages?: unknown[] })?.pages ?? ([] as unknown[])
-    ).flat() as any[]
+    type PrayerSession = Tables<'prayer_sessions'>
+    type Member = Tables<'members'>
+    type Joined = PrayerSession & { members: Member | null }
+    type SessionPage = Joined[]
+    const pages = data?.pages ?? [] // SessionPage[] from hook typing
+    const rows: Joined[] = (pages as SessionPage[]).flat()
 
     // Fetch names for descriptor and modal lists
     const { data: members } = useFetchMembers()
@@ -215,8 +219,12 @@ export default function Activity() {
                 <p className="text-sm text-neutral-600">No activity found.</p>
             ) : (
                 <div className="space-y-2">
-                    {rows.map((s: any) => (
-                        <SessionRow key={s.id} session={s} />
+                    {rows.map((s) => (
+                        <SessionRow
+                            key={s.id}
+                            session={s}
+                            member={s.members ?? undefined}
+                        />
                     ))}
                 </div>
             )}

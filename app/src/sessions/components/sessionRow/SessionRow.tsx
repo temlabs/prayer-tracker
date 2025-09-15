@@ -10,6 +10,7 @@ type PrayerSession = Tables<'prayer_sessions'>
 export type SessionRowProps = {
     session: PrayerSession
     campaignName?: string
+    member?: Tables<'members'>
     memberName?: string
     onPress?: () => void
 }
@@ -17,6 +18,7 @@ export type SessionRowProps = {
 export function SessionRow({
     session,
     campaignName,
+    member,
     memberName,
     onPress,
 }: SessionRowProps) {
@@ -33,6 +35,10 @@ export function SessionRow({
             : formatDuration(session.start_timestamp, ended)
     const relative = getRelativeTime(session.start_timestamp)
     const { label, extraDays } = formatTimeRange(session.start_timestamp, ended)
+    const resolvedMemberName =
+        member?.full_name ??
+        (member ? `${member.first_name} ${member.last_name}` : undefined) ??
+        memberName
 
     return (
         <button
@@ -47,9 +53,9 @@ export function SessionRow({
                         {relative}
                         {campaignName ? ` • ${campaignName}` : ''}
                     </div>
-                    {memberName ? (
+                    {resolvedMemberName ? (
                         <div className="text-xs text-neutral-600">
-                            {memberName}
+                            {resolvedMemberName}
                         </div>
                     ) : null}
                     <div className="text-xs text-neutral-500">
