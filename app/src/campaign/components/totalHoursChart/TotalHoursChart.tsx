@@ -26,6 +26,14 @@ export function TotalHoursChart({
     campaign,
     campaignTimeSeries,
 }: TotalHoursChartProps) {
+    const isDark = useMemo(() => {
+        if (typeof window === 'undefined') return false
+        const prefers = window.matchMedia(
+            '(prefers-color-scheme: dark)'
+        ).matches
+        const hasClass = document.documentElement.classList.contains('dark')
+        return prefers || hasClass
+    }, [])
     const target = campaign.target_hours ?? null
     const latest =
         campaignTimeSeries.length > 0
@@ -58,8 +66,8 @@ export function TotalHoursChart({
     // console.debug('xTicks', xTicks)
 
     return (
-        <section className="rounded-md border border-neutral-200 bg-white p-3">
-            <div className="mb-2 text-xs font-medium text-neutral-600">
+        <section className="rounded-md border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100">
+            <div className="mb-2 text-xs font-medium text-neutral-600 dark:text-neutral-400">
                 Cumulative hours over time
             </div>
             <ResponsiveContainer width="100%" height={220}>
@@ -67,13 +75,25 @@ export function TotalHoursChart({
                     {/* <CartesianGrid stroke="#eee" strokeDasharray="5 5" /> */}
                     <XAxis
                         dataKey="endOfDayIso"
+                        tick={{
+                            fill: isDark ? '#cbd5e1' : '#4b5563',
+                            fontSize: 12,
+                        }}
+                        axisLine={{ stroke: isDark ? '#475569' : '#e5e7eb' }}
+                        tickLine={{ stroke: isDark ? '#475569' : '#e5e7eb' }}
                         tickFormatter={(d) => {
                             const dateD = new Date(d)
                             return `${dateD.getDate()}/${(dateD.getMonth() + 1).toString().length < 2 ? '0' : ''}${dateD.getMonth() + 1}`
                         }}
                     />
                     <YAxis
-                    // domain={[0, 1000]}
+                        tick={{
+                            fill: isDark ? '#cbd5e1' : '#4b5563',
+                            fontSize: 12,
+                        }}
+                        axisLine={{ stroke: isDark ? '#475569' : '#e5e7eb' }}
+                        tickLine={{ stroke: isDark ? '#475569' : '#e5e7eb' }}
+                        // domain={[0, 1000]}
                     />
                     {/* <Line
                         type="monotone"
@@ -98,8 +118,19 @@ export function TotalHoursChart({
                         dot={false}
                         name="target line"
                     />
-                    <Tooltip />
-                    <Legend align="right" />
+                    <Tooltip
+                        contentStyle={{
+                            backgroundColor: isDark ? '#111827' : '#ffffff',
+                            borderColor: isDark ? '#374151' : '#e5e7eb',
+                            color: isDark ? '#e5e7eb' : '#111827',
+                        }}
+                        labelStyle={{ color: isDark ? '#e5e7eb' : '#111827' }}
+                        itemStyle={{ color: isDark ? '#e5e7eb' : '#111827' }}
+                    />
+                    <Legend
+                        align="right"
+                        wrapperStyle={{ color: isDark ? '#e5e7eb' : '#111827' }}
+                    />
                 </AreaChart>
             </ResponsiveContainer>
             {/* <ResponsiveContainer width="100%" height={220}>
