@@ -1,4 +1,5 @@
 import type { Tables } from '~/types/database.types'
+import { useEffect, useMemo, useState } from 'react'
 import {
     getRelativeTime,
     formatTimeRange,
@@ -24,16 +25,43 @@ export function SessionRow({
 }: SessionRowProps) {
     const ended = session.end_timestamp
     const isActive = !ended
-    const duration =
-        typeof (session as any).duration_in_seconds === 'number'
-            ? formatDuration(
-                  '1970-01-01T00:00:00.000Z',
-                  new Date(
-                      (session as any).duration_in_seconds * 1000
-                  ).toISOString()
+    const [nowMs, setNowMs] = useState<number | null>(null)
+
+    useEffect(() => {
+        if (!isActive) return
+        setNowMs(Date.now())
+        const id = setInterval(() => setNowMs(Date.now()), 5000)
+        return () => clearInterval(id)
+    }, [isActive])
+
+    function formatHmsFromMs(totalMs: number): string {
+        const totalSec = Math.max(0, Math.floor(totalMs / 1000))
+        const h = Math.floor(totalSec / 3600)
+        const m = Math.floor((totalSec % 3600) / 60)
+        const s = totalSec % 60
+        const hh = String(h).padStart(2, '0')
+        const mm = String(m).padStart(2, '0')
+        const ss = String(s).padStart(2, '0')
+        return `${hh}:${mm}:${ss}`
+    }
+    const duration = isActive
+        ? nowMs === null
+            ? '--:--:--'
+            : formatHmsFromMs(
+                  nowMs - new Date(session.start_timestamp).getTime()
               )
-            : formatDuration(session.start_timestamp, ended)
-    const relative = getRelativeTime(session.start_timestamp)
+        : typeof (session as any).duration_in_seconds === 'number'
+          ? formatDuration(
+                '1970-01-01T00:00:00.000Z',
+                new Date(
+                    (session as any).duration_in_seconds * 1000
+                ).toISOString()
+            )
+          : formatDuration(session.start_timestamp, ended)
+    const relative = useMemo(
+        () => getRelativeTime(session.start_timestamp),
+        [session.start_timestamp, nowMs]
+    )
     const { label, extraDays } = ended
         ? formatTimeRange(session.start_timestamp, ended)
         : { label: '', extraDays: 0 }
