@@ -6,6 +6,7 @@ import { useInfiniteSessionLog } from '~/src/sessions/useInfiniteSessionLog'
 import { useFetchMembers } from '~/src/member/useFetchMembers'
 import { useFetchPrayerCampaigns } from '~/src/campaign/useFetchPrayerCampaigns'
 import type { Tables } from '~/types/database.types'
+import { useUpdatePrayerSession } from '~/src/sessions/useUpdatePrayerSession'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Activity Log' }]
 
@@ -79,7 +80,7 @@ export default function Activity() {
     type Joined = PrayerSession & { members: Member | null }
     type SessionPage = Joined[]
     const pages = data?.pages ?? [] // SessionPage[] from hook typing
-    const rows: Joined[] = (pages as SessionPage[]).flat()
+    const rows: Joined[] = pages.flat()
 
     // Fetch names for descriptor and modal lists
     const { data: members } = useFetchMembers()
@@ -172,6 +173,41 @@ export default function Activity() {
         )
     }
 
+    // Row interactions
+    const [selected, setSelected] = useState<Joined | null>(null)
+    const [showEdit, setShowEdit] = useState(false)
+    const [showStopFirst, setShowStopFirst] = useState(false)
+
+    function onRowPress(s: Joined) {
+        setSelected(s)
+        if (s.end_timestamp == null) setShowStopFirst(true)
+        else setShowEdit(true)
+    }
+
+    const { mutate: updateSession, isPending: updating } =
+        useUpdatePrayerSession()
+
+    function stopSelectedNow() {
+        if (!selected) return
+        updateSession({
+            id: selected.id,
+            changes: { end_timestamp: new Date().toISOString() },
+        })
+        setShowStopFirst(false)
+        setSelected(null)
+    }
+
+    function toLocalInputValue(iso: string): string {
+        const d = new Date(iso)
+        const pad = (n: number) => String(n).padStart(2, '0')
+        const yyyy = d.getFullYear()
+        const mm = pad(d.getMonth() + 1)
+        const dd = pad(d.getDate())
+        const hh = pad(d.getHours())
+        const mi = pad(d.getMinutes())
+        return `${yyyy}-${mm}-${dd}T${hh}:${mi}`
+    }
+
     return (
         <main className="min-h-[100svh] px-4 py-4">
             <div className="sticky top-0 gap-2 items-start flex flex-col z-10 -mx-4 mb-4 border-b border-neutral-200 bg-white px-4 py-3">
@@ -224,6 +260,7 @@ export default function Activity() {
                             key={s.id}
                             session={s}
                             member={s.members ?? undefined}
+                            onPress={() => onRowPress(s)}
                         />
                     ))}
                 </div>
