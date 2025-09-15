@@ -95,38 +95,6 @@ export default function Activity() {
         setParams(next, { replace: true })
     }
 
-    const descriptor = useMemo(() => {
-        const parts: string[] = []
-        parts.push('showing')
-        if (!from && !to) parts.push('all')
-        parts.push('prayer activity')
-        if (memberIds.length > 0) {
-            const names = memberIds
-                .map((id) => members?.find((m) => m.id === id)?.full_name || id)
-                .filter(Boolean) as string[]
-            if (names.length > 0) {
-                parts.push('by')
-                const shown = names.slice(0, 2)
-                parts.push(shown.join(', '))
-                if (names.length > 2) parts.push(`and ${names.length - 2} more`)
-            }
-        }
-        if (campaignIds.length > 0) {
-            const cNames = campaignIds
-                .map((id) => campaigns?.find((c) => c.id === id)?.name || id)
-                .filter(Boolean) as string[]
-            if (cNames.length > 0) {
-                parts.push('for campaign')
-                parts.push(cNames.join(', '))
-            }
-        }
-        if (from) parts.push(`from ${new Date(from).toLocaleString()}`)
-        if (from && to) parts.push(`to ${new Date(to).toLocaleString()}`)
-        else if (!from && to)
-            parts.push(`up to ${new Date(to).toLocaleString()}`)
-        return parts.join(' ')
-    }, [memberIds, campaignIds, from, to, members, campaigns])
-
     const [showFilters, setShowFilters] = useState(false)
     const [draftMembers, setDraftMembers] = useState<string[]>(memberIds)
     const [draftCampaigns, setDraftCampaigns] = useState<string[]>(campaignIds)
@@ -147,11 +115,70 @@ export default function Activity() {
         setShowFilters(false)
     }
 
+    function renderDescriptor() {
+        const nameForMember = (id: string) =>
+            members?.find((m) => m.id === id)?.full_name || id
+        const nameForCampaign = (id: string) =>
+            campaigns?.find((c) => c.id === id)?.name || id
+        return (
+            <>
+                <span>Showing</span>
+                {!from && !to ? <span> all</span> : null}
+                <span> prayer activity</span>
+                {memberIds.length > 0 ? (
+                    <>
+                        <span> by </span>
+                        {memberIds.slice(0, 2).map((id, idx) => (
+                            <strong key={id}>
+                                {idx > 0 ? ', ' : ''}
+                                {nameForMember(id)}
+                            </strong>
+                        ))}
+                        {memberIds.length > 2 ? (
+                            <strong> and {memberIds.length - 2} more</strong>
+                        ) : null}
+                    </>
+                ) : null}
+                {campaignIds.length > 0 ? (
+                    <>
+                        <span> for campaign </span>
+                        <strong>
+                            {campaignIds.map(nameForCampaign).join(', ')}
+                        </strong>
+                    </>
+                ) : null}
+                {from ? (
+                    <>
+                        <span> from </span>
+                        <strong>{new Date(from).toLocaleString()}</strong>
+                    </>
+                ) : null}
+                {from && to ? (
+                    <>
+                        <span> to </span>
+                        <strong>{new Date(to).toLocaleString()}</strong>
+                    </>
+                ) : !from && to ? (
+                    <>
+                        <span> up to </span>
+                        <strong>{new Date(to).toLocaleString()}</strong>
+                    </>
+                ) : null}
+            </>
+        )
+    }
+
     return (
         <main className="min-h-[100svh] px-4 py-4">
-            <div className="sticky top-0 z-10 -mx-4 mb-4 border-b border-neutral-200 bg-white px-4 py-3">
-                <div className="flex flex-wrap items-center gap-2">
-                    <div className="ml-auto flex items-center gap-2">
+            <div className="sticky top-0 gap-2 items-start flex flex-col z-10 -mx-4 mb-4 border-b border-neutral-200 bg-white px-4 py-3">
+                <div className="flex w-full items-center grow justify-between gap-2">
+                    <button
+                        className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
+                        onClick={() => setShowFilters(true)}
+                    >
+                        Filters
+                    </button>
+                    <div className="flex items-center self-end justify-end gap-2">
                         <span aria-hidden>⇅</span>
                         <select
                             className="rounded border border-neutral-300 px-2 py-1 text-sm"
@@ -165,27 +192,21 @@ export default function Activity() {
                             <option value="duration_desc">Duration desc</option>
                             <option value="duration_asc">Duration asc</option>
                         </select>
-                        <button
-                            className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
-                            onClick={() => setShowFilters(true)}
-                        >
-                            Filters
-                        </button>
-                        <button
-                            className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
-                            onClick={() =>
-                                setParams(new URLSearchParams(), {
-                                    replace: true,
-                                })
-                            }
-                        >
-                            Clear
-                        </button>
                     </div>
-                    <p className="w-full text-xs text-neutral-600">
-                        {descriptor}
+                </div>
+                <div className="mt-1 flex items-baseline justify-between gap-2">
+                    <p className="text-xs text-neutral-600">
+                        {renderDescriptor()}
                     </p>
                 </div>
+                <button
+                    className="text-xs text-blue-700 underline"
+                    onClick={() =>
+                        setParams(new URLSearchParams(), { replace: true })
+                    }
+                >
+                    Clear filters
+                </button>
             </div>
 
             {status === 'pending' ? (
