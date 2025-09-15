@@ -11,6 +11,7 @@ import { ActiveSession } from '~/src/sessions/components/activeSession/ActiveSes
 import { useFetchMemberCampaigns } from '~/src/campaign/useFetchMemberCampaigns'
 import { NoCampaignPlaceholder } from '~/src/components/placeholder/NoCampaignPlaceholder'
 import { useCreatePrayerSession } from '~/src/sessions/useCreatePrayerSession'
+import { SessionRow } from '~/src/sessions/components/sessionRow/SessionRow'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Log Prayer' }]
 
@@ -56,6 +57,17 @@ export default function Log() {
             prayer_campaign_id: defaultCampaign.id,
         })
     }
+
+    // Recent completed sessions for member
+    const { data: recentSessions } = useFetchPrayerSessions(
+        member
+            ? {
+                  equals: { member_id: member.id },
+                  orderBy: { column: 'end_timestamp', ascending: false },
+                  limit: 5,
+              }
+            : { limit: 0 }
+    )
 
     return (
         <main className="min-h-[100svh] px-4 py-8">
@@ -106,6 +118,16 @@ export default function Log() {
                         )}
                     </section>
                 )}
+                {recentSessions && recentSessions.length > 0 ? (
+                    <section className="mt-10 space-y-2">
+                        <h2 className="text-sm font-medium text-neutral-700">
+                            Recent sessions
+                        </h2>
+                        {recentSessions.map((s) => (
+                            <SessionRow key={s.id} session={s} />
+                        ))}
+                    </section>
+                ) : null}
             </div>
         </main>
     )

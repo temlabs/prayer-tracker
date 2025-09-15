@@ -3,6 +3,7 @@ import type { Tables } from '~/types/database.types'
 import { useFetchPrayerCampaigns } from '~/src/campaign/useFetchPrayerCampaigns'
 import { useUpdatePrayerSession } from '~/src/sessions/useUpdatePrayerSession'
 import { useQueryClient } from '@tanstack/react-query'
+import { RECENT_SESSIONS_LIMIT } from '~/src/constants/sessions'
 
 type PrayerSession = Tables<'prayer_sessions'>
 
@@ -73,6 +74,57 @@ export function ActiveSession({ session }: ActiveSessionProps) {
                               }
                             : s
                     )
+                }
+            )
+
+            // Remove from the active list cache immediately (filters end_timestamp === null)
+            queryClient.setQueriesData<PrayerSession[]>(
+                {
+                    queryKey: [
+                        'prayer-sessions',
+                        JSON.stringify({ equals: { end_timestamp: null } }),
+                    ],
+                },
+                (old) => (old ? old.filter((s) => s.id !== vars.id) : old)
+            )
+
+            // Optimistically add to any cached recent lists for this member (end_timestamp desc)
+            queryClient.setQueriesData<PrayerSession[]>(
+                {
+                    queryKey: ['prayer-sessions'],
+                    predicate: (q) => {
+                        const key = q.queryKey as readonly unknown[]
+                        if (key[0] !== 'prayer-sessions') return false
+                        const meta =
+                            typeof key[1] === 'string' ? (key[1] as string) : ''
+                        if (!meta) return false
+                        try {
+                            const parsed = JSON.parse(meta) as any
+                            const order = parsed?.orderBy
+                            const memberFilter = parsed?.equals?.member_id
+                            return (
+                                order?.column === 'end_timestamp' &&
+                                order?.ascending === false &&
+                                (!memberFilter ||
+                                    memberFilter === session.member_id)
+                            )
+                        } catch {
+                            return false
+                        }
+                    },
+                },
+                (old) => {
+                    const endedAt = (vars.changes.end_timestamp ??
+                        new Date().toISOString()) as string
+                    const finished: PrayerSession = {
+                        ...session,
+                        end_timestamp: endedAt,
+                    }
+                    const next = old ? [finished, ...old] : [finished]
+                    const dedup = Array.from(
+                        new Map(next.map((s) => [s.id, s])).values()
+                    )
+                    return dedup.slice(0, RECENT_SESSIONS_LIMIT)
                 }
             )
             return { previous } as { previous: [unknown, unknown][] }
