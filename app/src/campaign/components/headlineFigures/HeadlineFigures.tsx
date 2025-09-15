@@ -38,8 +38,8 @@ export function HeadlineFigures({ campaign }: HeadlineFiguresProps) {
     }
 
     return (
-        <section className="rounded-md border border-neutral-200 bg-white p-4">
-            <strong className="text-neutral-500 text-xs">
+        <section className="rounded-md border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100">
+            <strong className="text-neutral-500 text-xs dark:text-neutral-400">
                 TOTAL PRAYER TIME
             </strong>
             <div className="flex items-end gap-2">
@@ -47,11 +47,13 @@ export function HeadlineFigures({ campaign }: HeadlineFiguresProps) {
                     {totalHours} h
                 </div>
                 {target != null ? (
-                    <div className="pb-1 text-neutral-600">/ {target} h</div>
+                    <div className="pb-1 text-neutral-600 dark:text-neutral-400">
+                        / {target} h
+                    </div>
                 ) : null}
             </div>
 
-            <div className="mt-3 h-3 w-full rounded bg-neutral-200">
+            <div className="mt-3 h-3 w-full rounded bg-neutral-200 dark:bg-neutral-800">
                 {percent != null ? (
                     <div
                         className="h-3 rounded bg-blue-600 text-[10px] leading-3 text-white"
@@ -62,17 +64,23 @@ export function HeadlineFigures({ campaign }: HeadlineFiguresProps) {
                         aria-valuemax={100}
                     />
                 ) : (
-                    <div className="h-3 w-1/3 rounded bg-neutral-300" />
+                    <div className="h-3 w-1/3 rounded bg-neutral-300 dark:bg-neutral-700" />
                 )}
             </div>
             {percent != null ? (
-                <div className="mt-1 text-xs text-neutral-600">{percent}%</div>
+                <div className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+                    {percent}%
+                </div>
             ) : (
-                <div className="mt-1 text-xs text-neutral-600">No target</div>
+                <div className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+                    No target
+                </div>
             )}
 
             {timeLeft ? (
-                <div className="mt-2 text-xs text-neutral-700">{timeLeft}</div>
+                <div className="mt-2 text-xs text-neutral-700 dark:text-neutral-300">
+                    {timeLeft}
+                </div>
             ) : null}
         </section>
     )
