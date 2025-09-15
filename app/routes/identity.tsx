@@ -51,7 +51,7 @@ export default function Identity() {
         try {
             localStorage.setItem('pt.user', JSON.stringify(selected))
         } catch {}
-        navigate('/log')
+        navigate('/')
     }
 
     useEffect(() => {

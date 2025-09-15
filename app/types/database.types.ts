@@ -105,6 +105,13 @@ export type Database = {
             foreignKeyName: "campaign_members_prayer_campaign_id_fkey"
             columns: ["prayer_campaign_id"]
             isOneToOne: false
+            referencedRelation: "campaign_cumulative_view"
+            referencedColumns: ["campaign_id"]
+          },
+          {
+            foreignKeyName: "campaign_members_prayer_campaign_id_fkey"
+            columns: ["prayer_campaign_id"]
+            isOneToOne: false
             referencedRelation: "prayer_campaigns"
             referencedColumns: ["id"]
           },
@@ -256,6 +263,13 @@ export type Database = {
             foreignKeyName: "prayer_sessions_prayer_campaign_id_fkey"
             columns: ["prayer_campaign_id"]
             isOneToOne: false
+            referencedRelation: "campaign_cumulative_view"
+            referencedColumns: ["campaign_id"]
+          },
+          {
+            foreignKeyName: "prayer_sessions_prayer_campaign_id_fkey"
+            columns: ["prayer_campaign_id"]
+            isOneToOne: false
             referencedRelation: "prayer_campaigns"
             referencedColumns: ["id"]
           },
@@ -263,7 +277,14 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      campaign_cumulative_view: {
+        Row: {
+          campaign_id: string | null
+          cumulative_seconds: number | null
+          day: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       gtrgm_compress: {
