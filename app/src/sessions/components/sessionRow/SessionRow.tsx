@@ -75,19 +75,21 @@ export function SessionRow({
             type="button"
             onClick={onPress}
             className={
-                'w-full rounded-md bg-white px-4 py-3 text-left hover:bg-neutral-50 border ' +
-                (isActive ? 'border-red-500' : 'border-neutral-200')
+                'w-full rounded-md bg-white px-4 py-3 text-left hover:bg-neutral-50 border dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800 ' +
+                (isActive
+                    ? 'border-red-500'
+                    : 'border-neutral-200 dark:border-neutral-800')
             }
         >
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <div className="font-semibold tabular-nums">{duration}</div>
-                    <div className="text-xs text-neutral-600">
+                    <div className="text-xs text-neutral-600 dark:text-neutral-400">
                         {relative}
                         {campaignName ? ` • ${campaignName}` : ''}
                     </div>
                     {resolvedMemberName ? (
-                        <div className="text-xs text-neutral-600">
+                        <div className="text-xs text-neutral-600 dark:text-neutral-400">
                             {resolvedMemberName}
                         </div>
                     ) : null}
@@ -96,13 +98,16 @@ export function SessionRow({
                             In progress
                         </div>
                     ) : (
-                        <div className="text-xs text-neutral-500">
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400">
                             {label}
                             {extraDays > 0 ? ` (+${extraDays})` : ''}
                         </div>
                     )}
                 </div>
-                <div aria-hidden className="text-neutral-400">
+                <div
+                    aria-hidden
+                    className="text-neutral-400 dark:text-neutral-500"
+                >
                     ›
                 </div>
             </div>

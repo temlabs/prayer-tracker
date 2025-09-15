@@ -97,13 +97,16 @@ export function CreateSessionModal({
     if (!open) return null
 
     return (
-        <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/30 p-4">
-            <div className="w-full max-w-md rounded-t-2xl bg-white p-4 shadow-xl">
+        <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/30 p-4 dark:bg-black/50">
+            <div className="w-full max-w-md rounded-t-2xl bg-white p-4 shadow-xl dark:bg-neutral-900 dark:text-neutral-100">
                 <div className="mb-3 flex items-center justify-between">
                     <h3 className="text-base font-semibold">
                         Log a past prayer
                     </h3>
-                    <button className="text-sm underline" onClick={onClose}>
+                    <button
+                        className="text-sm underline dark:text-neutral-200"
+                        onClick={onClose}
+                    >
                         Close
                     </button>
                 </div>
@@ -111,19 +114,19 @@ export function CreateSessionModal({
                 <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <p className="mb-1 text-xs text-neutral-500">
+                            <p className="mb-1 text-xs text-neutral-500 dark:text-neutral-400">
                                 Member
                             </p>
-                            <div className="rounded border border-neutral-200 px-2 py-1 text-sm bg-neutral-50">
+                            <div className="rounded border border-neutral-200 px-2 py-1 text-sm bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100">
                                 {member.full_name ??
                                     `${member.first_name} ${member.last_name}`}
                             </div>
                         </div>
                         <div>
-                            <p className="mb-1 text-xs text-neutral-500">
+                            <p className="mb-1 text-xs text-neutral-500 dark:text-neutral-400">
                                 Campaign
                             </p>
-                            <div className="rounded border border-neutral-200 px-2 py-1 text-sm bg-neutral-50">
+                            <div className="rounded border border-neutral-200 px-2 py-1 text-sm bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100">
                                 {campaign.name}
                             </div>
                         </div>
@@ -133,7 +136,7 @@ export function CreateSessionModal({
                             <p className="mb-1 text-sm font-medium">Start</p>
                             <input
                                 type="datetime-local"
-                                className="w-full rounded border border-neutral-300 px-2 py-1 text-sm"
+                                className="w-full rounded border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                                 value={startLocal}
                                 onChange={(e) => setStartLocal(e.target.value)}
                                 disabled={creating || updating}
@@ -143,7 +146,7 @@ export function CreateSessionModal({
                             <p className="mb-1 text-sm font-medium">End</p>
                             <input
                                 type="datetime-local"
-                                className="w-full rounded border border-neutral-300 px-2 py-1 text-sm"
+                                className="w-full rounded border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                                 value={endLocal}
                                 onChange={(e) => setEndLocal(e.target.value)}
                                 disabled={creating || updating}
@@ -151,13 +154,15 @@ export function CreateSessionModal({
                         </div>
                     </div>
                     {error ? (
-                        <p className="text-xs text-red-600">{error}</p>
+                        <p className="text-xs text-red-600 dark:text-red-400">
+                            {error}
+                        </p>
                     ) : null}
                 </div>
 
                 <div className="mt-4 flex justify-end gap-2">
                     <button
-                        className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
+                        className="rounded border border-neutral-300 px-3 py-1.5 text-sm dark:border-neutral-700"
                         onClick={onClose}
                         disabled={creating || updating}
                     >

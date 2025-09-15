@@ -211,10 +211,10 @@ export default function Activity() {
 
     return (
         <main className="min-h-[100svh] px-4 py-4">
-            <div className="sticky top-0 gap-2 items-start flex flex-col z-10 -mx-4 mb-4 border-b border-neutral-200 bg-white px-4 py-3">
+            <div className="sticky top-0 gap-2 items-start flex flex-col z-10 -mx-4 mb-4 border-b border-neutral-200 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100">
                 <div className="flex w-full items-center grow justify-between gap-2">
                     <button
-                        className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
+                        className="rounded border border-neutral-300 px-3 py-1.5 text-sm dark:border-neutral-700 dark:text-neutral-100 dark:bg-neutral-800"
                         onClick={() => setShowFilters(true)}
                     >
                         Filters
@@ -222,7 +222,7 @@ export default function Activity() {
                     <div className="flex items-center self-end justify-end gap-2">
                         <span aria-hidden>⇅</span>
                         <select
-                            className="rounded border border-neutral-300 px-2 py-1 text-sm"
+                            className="rounded border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                             value={sort}
                             onChange={(e) =>
                                 handleChangeParam('sort', e.target.value)
@@ -236,12 +236,12 @@ export default function Activity() {
                     </div>
                 </div>
                 <div className="mt-1 flex items-baseline justify-between gap-2">
-                    <p className="text-xs text-neutral-600">
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400">
                         {renderDescriptor()}
                     </p>
                 </div>
                 <button
-                    className="text-xs text-blue-700 underline"
+                    className="text-xs text-blue-700 underline dark:text-blue-400"
                     onClick={() =>
                         setParams(new URLSearchParams(), { replace: true })
                     }
@@ -251,9 +251,13 @@ export default function Activity() {
             </div>
 
             {status === 'pending' ? (
-                <p className="text-sm text-neutral-600">Loading…</p>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                    Loading…
+                </p>
             ) : rows.length === 0 ? (
-                <p className="text-sm text-neutral-600">No activity found.</p>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                    No activity found.
+                </p>
             ) : (
                 <div className="space-y-2">
                     {rows.map((s) => (
@@ -270,7 +274,7 @@ export default function Activity() {
             {hasNextPage && (
                 <div className="mt-4 flex justify-center">
                     <button
-                        className="rounded border border-neutral-300 px-4 py-2 text-sm"
+                        className="rounded border border-neutral-300 px-4 py-2 text-sm dark:border-neutral-700 dark:text-neutral-100 dark:bg-neutral-800"
                         onClick={() => fetchNextPage()}
                         disabled={isFetchingNextPage}
                     >
@@ -280,14 +284,14 @@ export default function Activity() {
             )}
 
             {showFilters && (
-                <div className="fixed inset-0 z-20 flex items-end justify-center bg-black/30 p-4">
-                    <div className="w-full max-w-md rounded-t-2xl bg-white p-4 shadow-xl">
+                <div className="fixed inset-0 z-20 flex items-end justify-center bg-black/30 p-4 dark:bg-black/50">
+                    <div className="w-full max-w-md rounded-t-2xl bg-white p-4 shadow-xl dark:bg-neutral-900 dark:text-neutral-100">
                         <h3 className="mb-3 text-base font-semibold">
                             Filters
                         </h3>
                         <div className="mb-4">
                             <p className="mb-1 text-sm font-medium">Members</p>
-                            <div className="max-h-40 space-y-1 overflow-auto rounded border border-neutral-200 p-2">
+                            <div className="max-h-40 space-y-1 overflow-auto rounded border border-neutral-200 p-2 dark:border-neutral-700">
                                 {members?.map((m) => (
                                     <label
                                         key={m.id}
@@ -321,7 +325,7 @@ export default function Activity() {
                             <p className="mb-1 text-sm font-medium">
                                 Campaigns
                             </p>
-                            <div className="max-h-40 space-y-1 overflow-auto rounded border border-neutral-200 p-2">
+                            <div className="max-h-40 space-y-1 overflow-auto rounded border border-neutral-200 p-2 dark:border-neutral-700">
                                 {campaigns?.map((c) => (
                                     <label
                                         key={c.id}
@@ -353,7 +357,7 @@ export default function Activity() {
                                 <p className="mb-1 text-sm font-medium">From</p>
                                 <input
                                     type="datetime-local"
-                                    className="w-full rounded border border-neutral-300 px-2 py-1 text-sm"
+                                    className="w-full rounded border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                                     value={draftFrom ?? ''}
                                     onChange={(e) =>
                                         setDraftFrom(
@@ -366,7 +370,7 @@ export default function Activity() {
                                 <p className="mb-1 text-sm font-medium">To</p>
                                 <input
                                     type="datetime-local"
-                                    className="w-full rounded border border-neutral-300 px-2 py-1 text-sm"
+                                    className="w-full rounded border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                                     value={draftTo ?? ''}
                                     onChange={(e) =>
                                         setDraftTo(e.target.value || undefined)
@@ -376,7 +380,7 @@ export default function Activity() {
                         </div>
                         <div className="mt-3 flex justify-end gap-2">
                             <button
-                                className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
+                                className="rounded border border-neutral-300 px-3 py-1.5 text-sm dark:border-neutral-700"
                                 onClick={() => setShowFilters(false)}
                             >
                                 Cancel
@@ -393,17 +397,17 @@ export default function Activity() {
             )}
 
             {showStopFirst && selected && (
-                <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/30 p-4">
-                    <div className="w-full max-w-sm rounded-lg bg-white p-4 shadow-xl">
+                <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/30 p-4 dark:bg-black/50">
+                    <div className="w-full max-w-sm rounded-lg bg-white p-4 shadow-xl dark:bg-neutral-900 dark:text-neutral-100">
                         <h3 className="mb-2 text-base font-semibold">
                             Session in progress
                         </h3>
-                        <p className="mb-4 text-sm text-neutral-700">
+                        <p className="mb-4 text-sm text-neutral-700 dark:text-neutral-300">
                             Stop this session to edit it.
                         </p>
                         <div className="flex justify-end gap-2">
                             <button
-                                className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
+                                className="rounded border border-neutral-300 px-3 py-1.5 text-sm dark:border-neutral-700"
                                 onClick={() => {
                                     setShowStopFirst(false)
                                     setSelected(null)

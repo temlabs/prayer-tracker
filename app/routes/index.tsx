@@ -138,7 +138,7 @@ export default function Index() {
                 {recentSessions && recentSessions.length > 0 ? (
                     <section className="mt-10 space-y-2">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-sm font-medium text-neutral-700">
+                            <h2 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                                 Recent sessions
                             </h2>
                             <LinkButton text="See all" onPress={handleSeeAll} />

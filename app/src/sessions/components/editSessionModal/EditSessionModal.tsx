@@ -108,11 +108,14 @@ export function EditSessionModal({
     if (!open || !session) return null
 
     return (
-        <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/30 p-4">
-            <div className="w-full max-w-md rounded-t-2xl bg-white p-4 shadow-xl">
+        <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/30 p-4 dark:bg-black/50">
+            <div className="w-full max-w-md rounded-t-2xl bg-white p-4 shadow-xl dark:bg-neutral-900 dark:text-neutral-100">
                 <div className="mb-3 flex items-center justify-between">
                     <h3 className="text-base font-semibold">Edit session</h3>
-                    <button className="text-sm underline" onClick={onClose}>
+                    <button
+                        className="text-sm underline dark:text-neutral-200"
+                        onClick={onClose}
+                    >
                         Close
                     </button>
                 </div>
@@ -121,7 +124,7 @@ export function EditSessionModal({
                     <div>
                         <p className="mb-1 text-sm font-medium">Campaign</p>
                         <select
-                            className="w-full rounded border border-neutral-300 px-2 py-1 text-sm"
+                            className="w-full rounded border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                             value={campaignId}
                             onChange={(e) => setCampaignId(e.target.value)}
                             disabled={isPending}
@@ -139,7 +142,7 @@ export function EditSessionModal({
                             <p className="mb-1 text-sm font-medium">Start</p>
                             <input
                                 type="datetime-local"
-                                className="w-full rounded border border-neutral-300 px-2 py-1 text-sm"
+                                className="w-full rounded border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                                 value={startLocal}
                                 onChange={(e) => setStartLocal(e.target.value)}
                                 disabled={isPending}
@@ -149,7 +152,7 @@ export function EditSessionModal({
                             <p className="mb-1 text-sm font-medium">End</p>
                             <input
                                 type="datetime-local"
-                                className="w-full rounded border border-neutral-300 px-2 py-1 text-sm"
+                                className="w-full rounded border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
                                 value={endLocal}
                                 onChange={(e) => setEndLocal(e.target.value)}
                                 disabled={isPending}
@@ -157,10 +160,12 @@ export function EditSessionModal({
                         </div>
                     </div>
                     {error ? (
-                        <p className="text-xs text-red-600">{error}</p>
+                        <p className="text-xs text-red-600 dark:text-red-400">
+                            {error}
+                        </p>
                     ) : null}
                     {isActive ? (
-                        <p className="text-xs text-neutral-600">
+                        <p className="text-xs text-neutral-600 dark:text-neutral-400">
                             This session is currently in progress. Stop it first
                             to edit.
                         </p>
@@ -169,14 +174,14 @@ export function EditSessionModal({
 
                 <div className="mt-4 flex justify-between gap-2">
                     <button
-                        className="rounded border border-red-300 px-3 py-1.5 text-sm text-red-700 disabled:opacity-60"
+                        className="rounded border border-red-300 px-3 py-1.5 text-sm text-red-700 disabled:opacity-60 dark:border-red-800 dark:text-red-400"
                         onClick={handleDelete}
                         disabled={isPending || deleting}
                     >
                         Delete
                     </button>
                     <button
-                        className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
+                        className="rounded border border-neutral-300 px-3 py-1.5 text-sm dark:border-neutral-700"
                         onClick={onClose}
                         disabled={isPending || deleting}
                     >

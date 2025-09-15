@@ -147,13 +147,15 @@ export function ActiveSession({ session }: ActiveSessionProps) {
     }
 
     return (
-        <section className="flex items-center justify-between rounded-md border border-neutral-200 bg-white px-4 py-3">
+        <section className="flex items-center justify-between rounded-md border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100">
             <div className="min-w-0">
                 <div className="text-2xl font-semibold tabular-nums">
                     {hydrated ? formatHms(elapsedSeconds) : '--:--:--'}
                 </div>
-                <div className="text-sm text-neutral-600">{campaignName}</div>
-                <div className="text-xs text-neutral-500">
+                <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                    {campaignName}
+                </div>
+                <div className="text-xs text-neutral-500 dark:text-neutral-400">
                     Started {new Date(session.start_timestamp).toLocaleString()}
                 </div>
             </div>
