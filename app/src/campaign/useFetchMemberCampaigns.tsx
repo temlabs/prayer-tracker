@@ -7,42 +7,57 @@ import {
 import { getSupabaseBrowserClient } from '~/lib/supabase.client'
 import type { Tables } from '~/types/database.types'
 
-type PrayerSession = Tables<'prayer_sessions'>
+type CampaignMember = Tables<'campaign_members'>
+type PrayerCampaign = Tables<'prayer_campaigns'>
 
-export type PrayerSessionsFilter = {
-    equals?: Partial<PrayerSession>
+export type MemberCampaignsFilters = {
+    equals?: Partial<PrayerCampaign>
     in?: Partial<{
-        [K in keyof PrayerSession]: NonNullable<PrayerSession[K]>[]
+        [K in keyof PrayerCampaign]: NonNullable<PrayerCampaign[K]>[]
     }>
-    ilike?: Partial<
-        Pick<PrayerSession, 'id' | 'member_id' | 'prayer_campaign_id'>
-    >
+    ilike?: Partial<Pick<PrayerCampaign, 'name'>>
     gte?: Partial<
         Pick<
-            PrayerSession,
+            PrayerCampaign,
             'start_timestamp' | 'end_timestamp' | 'created_at' | 'updated_at'
         >
     >
     lte?: Partial<
         Pick<
-            PrayerSession,
+            PrayerCampaign,
             'start_timestamp' | 'end_timestamp' | 'created_at' | 'updated_at'
         >
     >
-    orderBy?: { column: keyof PrayerSession; ascending?: boolean }
+    orderBy?: { column: keyof PrayerCampaign; ascending?: boolean }
     limit?: number
 }
 
-type FetchPrayerSessionsOptions = Omit<
-    UseQueryOptions<PrayerSession[], Error, PrayerSession[], QueryKey>,
+export type UseFetchMemberCampaignsArgs = {
+    member_id: CampaignMember['member_id']
+    filters?: MemberCampaignsFilters
+}
+
+export type MemberCampaignWithTarget = {
+    campaign: PrayerCampaign
+    individual_target_hours: CampaignMember['individual_target_hours']
+}
+
+type FetchMemberCampaignsOptions = Omit<
+    UseQueryOptions<
+        MemberCampaignWithTarget[],
+        Error,
+        MemberCampaignWithTarget[],
+        QueryKey
+    >,
     'queryKey' | 'queryFn'
 >
 
-export function useFetchPrayerSessions(
-    filters?: PrayerSessionsFilter,
-    config?: FetchPrayerSessionsOptions
-): UseQueryResult<PrayerSession[], Error> {
+export function useFetchMemberCampaigns(
+    args: UseFetchMemberCampaignsArgs,
+    config?: FetchMemberCampaignsOptions
+): UseQueryResult<MemberCampaignWithTarget[], Error> {
     function stableKey(): string {
+        const { filters } = args
         if (!filters) return ''
         const sortObject = (obj: any): any => {
             if (obj === null || typeof obj !== 'object') return obj
@@ -56,16 +71,25 @@ export function useFetchPrayerSessions(
         }
         return JSON.stringify(sortObject(filters))
     }
-    return useQuery<PrayerSession[], Error, PrayerSession[], QueryKey>({
-        queryKey: ['prayer-sessions', stableKey()],
+    return useQuery<
+        MemberCampaignWithTarget[],
+        Error,
+        MemberCampaignWithTarget[],
+        QueryKey
+    >({
+        queryKey: ['member-campaigns', args.member_id ?? '', stableKey()],
         queryFn: async () => {
             const supabase = getSupabaseBrowserClient()
-            let query = supabase.from('prayer_sessions').select('*')
+            let query = supabase
+                .from('campaign_members')
+                .select('individual_target_hours, prayer_campaigns(*)')
+                .eq('member_id', args.member_id)
 
+            const filters = args.filters
             if (filters?.equals) {
                 for (const [key, value] of Object.entries(filters.equals)) {
                     if (value === undefined) continue
-                    const column = key as keyof PrayerSession as string
+                    const column = `prayer_campaigns.${key}`
                     if (value === null) {
                         query = query.is(column, null)
                     } else {
@@ -77,7 +101,7 @@ export function useFetchPrayerSessions(
             if (filters?.in) {
                 for (const [key, arr] of Object.entries(filters.in)) {
                     if (!arr || arr.length === 0) continue
-                    const column = key as keyof PrayerSession as string
+                    const column = `prayer_campaigns.${key}`
                     query = query.in(column, arr as never[])
                 }
             }
@@ -85,7 +109,7 @@ export function useFetchPrayerSessions(
             if (filters?.ilike) {
                 for (const [key, pattern] of Object.entries(filters.ilike)) {
                     if (!pattern) continue
-                    const column = key as keyof PrayerSession as string
+                    const column = `prayer_campaigns.${key}`
                     query = query.ilike(column, pattern as string)
                 }
             }
@@ -93,7 +117,7 @@ export function useFetchPrayerSessions(
             if (filters?.gte) {
                 for (const [key, value] of Object.entries(filters.gte)) {
                     if (value === undefined) continue
-                    const column = key as keyof PrayerSession as string
+                    const column = `prayer_campaigns.${key}`
                     query = query.gte(column, value as never)
                 }
             }
@@ -101,25 +125,38 @@ export function useFetchPrayerSessions(
             if (filters?.lte) {
                 for (const [key, value] of Object.entries(filters.lte)) {
                     if (value === undefined) continue
-                    const column = key as keyof PrayerSession as string
+                    const column = `prayer_campaigns.${key}`
                     query = query.lte(column, value as never)
                 }
             }
 
             if (filters?.orderBy) {
                 const { column, ascending = false } = filters.orderBy
-                query = query.order(column as string, { ascending })
-            } else {
-                query = query.order('start_timestamp', { ascending: false })
+                query = query.order(column as string, {
+                    ascending,
+                    foreignTable: 'prayer_campaigns',
+                })
             }
 
             if (typeof filters?.limit === 'number') {
+                // Limit result rows at the root level
                 query = query.limit(filters.limit)
             }
 
             const { data, error } = await query
             if (error) throw error
-            return data ?? []
+
+            const rows = (data ?? []) as Array<{
+                individual_target_hours: CampaignMember['individual_target_hours']
+                prayer_campaigns: PrayerCampaign | null
+            }>
+
+            return rows
+                .filter((r) => r.prayer_campaigns)
+                .map((r) => ({
+                    campaign: r.prayer_campaigns as PrayerCampaign,
+                    individual_target_hours: r.individual_target_hours,
+                }))
         },
         ...config,
     })

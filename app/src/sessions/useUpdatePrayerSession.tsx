@@ -40,11 +40,45 @@ export function useUpdatePrayerSession(
             if (error) throw error
             return data as PrayerSession
         },
+        onMutate: async (vars) => {
+            await queryClient.cancelQueries({ queryKey: ['prayer-sessions'] })
+            // If caller supplied their own onMutate, defer to them entirely
+            if (options?.onMutate) {
+                // Delegate to caller if they provided custom onMutate
+                // Cast to unknown to satisfy differing context expectations
+                return (
+                    options.onMutate as unknown as (
+                        v: UpdatePrayerSessionInput
+                    ) => unknown
+                )(vars)
+            }
+            const previous = queryClient.getQueriesData({
+                queryKey: ['prayer-sessions'],
+            })
+            // Optimistically apply changes across any cached lists
+            queryClient.setQueriesData<PrayerSession[]>(
+                { queryKey: ['prayer-sessions'] },
+                (old) => {
+                    if (!old) return old
+                    return old.map((s) =>
+                        s.id === vars.id ? { ...s, ...vars.changes } : s
+                    )
+                }
+            )
+            return { previous } as { previous: [unknown, unknown][] }
+        },
         onSuccess: (data, vars, ctx) => {
             queryClient.invalidateQueries({ queryKey: ['prayer-sessions'] })
             options?.onSuccess?.(data, vars, ctx)
         },
         onError: (err, vars, ctx) => {
+            if (!options?.onError && ctx && (ctx as any).previous) {
+                for (const [key, data] of (
+                    ctx as { previous: [unknown, unknown][] }
+                ).previous) {
+                    queryClient.setQueryData(key as any, data)
+                }
+            }
             options?.onError?.(err, vars, ctx)
         },
         onSettled: (data, err, vars, ctx) => {
