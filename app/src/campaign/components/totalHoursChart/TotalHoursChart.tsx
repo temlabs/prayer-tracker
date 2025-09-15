@@ -10,6 +10,8 @@ import {
     XAxis,
     YAxis,
     Line,
+    LineChart,
+    Legend,
 } from 'recharts'
 import { useMemo } from 'react'
 
@@ -53,7 +55,7 @@ export function TotalHoursChart({
         return Array.from(tickSet)
     }, [campaignTimeSeries])
 
-    console.debug('campaignTimeSeries', campaignTimeSeries)
+    // console.debug('xTicks', xTicks)
 
     return (
         <section className="rounded-md border border-neutral-200 bg-white p-3">
@@ -61,6 +63,46 @@ export function TotalHoursChart({
                 Cumulative hours over time
             </div>
             <ResponsiveContainer width="100%" height={220}>
+                <AreaChart data={campaignTimeSeries}>
+                    {/* <CartesianGrid stroke="#eee" strokeDasharray="5 5" /> */}
+                    <XAxis
+                        dataKey="endOfDayIso"
+                        tickFormatter={(d) => {
+                            const dateD = new Date(d)
+                            return `${dateD.getDate()}/${(dateD.getMonth() + 1).toString().length < 2 ? '0' : ''}${dateD.getMonth() + 1}`
+                        }}
+                    />
+                    <YAxis
+                    // domain={[0, 1000]}
+                    />
+                    {/* <Line
+                        type="monotone"
+                        dataKey="hours"
+                        stroke="#8884d8"
+                        strokeWidth={2}
+                        dot={false}
+                        name="hours prayed"
+                    /> */}
+                    <Area
+                        dataKey="hours"
+                        stroke="#8884d8"
+                        fill="#8884d8"
+                        name="hours prayed"
+                    />
+                    <Line
+                        type="monotone"
+                        dataKey="guide"
+                        stroke="#9ab5a1"
+                        opacity={0.4}
+                        strokeWidth={2}
+                        dot={false}
+                        name="target line"
+                    />
+                    <Tooltip />
+                    <Legend align="right" />
+                </AreaChart>
+            </ResponsiveContainer>
+            {/* <ResponsiveContainer width="100%" height={220}>
                 <AreaChart
                     data={campaignTimeSeries}
                     margin={{ left: 8, right: 8, top: 8, bottom: 8 }}
@@ -88,14 +130,20 @@ export function TotalHoursChart({
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis
                         dataKey="day"
-                        ticks={xTicks}
+                        ticks={campaignTimeSeries.map((p) => p.endOfDayIso)}
                         tickFormatter={(d) => {
+                            console.debug('about to format', d)
                             const dt = new Date(d)
                             const opts: Intl.DateTimeFormatOptions = {
                                 day: 'numeric',
                                 month: 'short',
                             }
-                            return dt.toLocaleDateString(undefined, opts)
+                            const formatted = dt.toLocaleDateString(
+                                undefined,
+                                opts
+                            )
+                            console.debug('formatted', formatted)
+                            return formatted
                         }}
                         interval={0}
                         minTickGap={20}
@@ -169,7 +217,7 @@ export function TotalHoursChart({
                         fill="url(#hoursGradient)"
                     />
                 </AreaChart>
-            </ResponsiveContainer>
+            </ResponsiveContainer> */}
         </section>
     )
 }

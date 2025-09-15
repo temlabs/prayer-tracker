@@ -59,12 +59,12 @@ export default function Data() {
             ) : selected ? (
                 <div className="space-y-4">
                     <HeadlineFigures campaign={selected} />
-                    {/* {series && selected ? (
+                    {series && selected ? (
                         <TotalHoursChart
                             campaign={selected}
                             campaignTimeSeries={series}
                         />
-                    ) : null} */}
+                    ) : null}
                 </div>
             ) : null}
         </main>
