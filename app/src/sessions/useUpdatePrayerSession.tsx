@@ -62,9 +62,27 @@ export function useUpdatePrayerSession(
                 { queryKey: ['prayer-sessions'] },
                 (old) => {
                     if (!old) return old
-                    return old.map((s) =>
-                        s.id === vars.id ? { ...s, ...vars.changes } : s
-                    )
+                    return old.map((s) => {
+                        if (s.id !== vars.id) return s
+                        const next: PrayerSession = { ...s, ...vars.changes }
+                        const start =
+                            (next.start_timestamp as unknown as string) || ''
+                        const end =
+                            (next.end_timestamp as unknown as string) || ''
+                        if (start && end) {
+                            ;(next as any).duration_in_seconds = Math.max(
+                                0,
+                                Math.floor(
+                                    (new Date(end).getTime() -
+                                        new Date(start).getTime()) /
+                                        1000
+                                )
+                            )
+                        } else if (!end) {
+                            ;(next as any).duration_in_seconds = null
+                        }
+                        return next
+                    })
                 }
             )
 
@@ -76,11 +94,33 @@ export function useUpdatePrayerSession(
                     return {
                         pageParams: old.pageParams,
                         pages: old.pages.map((page) =>
-                            page.map((row) =>
-                                row.id === vars.id
-                                    ? { ...row, ...vars.changes }
-                                    : row
-                            )
+                            page.map((row) => {
+                                if (row.id !== vars.id) return row
+                                const next: JoinedSession = {
+                                    ...(row as any),
+                                    ...vars.changes,
+                                }
+                                const start =
+                                    (next.start_timestamp as unknown as string) ||
+                                    ''
+                                const end =
+                                    (next.end_timestamp as unknown as string) ||
+                                    ''
+                                if (start && end) {
+                                    ;(next as any).duration_in_seconds =
+                                        Math.max(
+                                            0,
+                                            Math.floor(
+                                                (new Date(end).getTime() -
+                                                    new Date(start).getTime()) /
+                                                    1000
+                                            )
+                                        )
+                                } else if (!end) {
+                                    ;(next as any).duration_in_seconds = null
+                                }
+                                return next
+                            })
                         ),
                     }
                 }
