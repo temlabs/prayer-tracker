@@ -23,7 +23,7 @@ export function SessionRow({
     onPress,
 }: SessionRowProps) {
     const ended = session.end_timestamp
-    if (!ended) return null
+    const isActive = !ended
     const duration =
         typeof (session as any).duration_in_seconds === 'number'
             ? formatDuration(
@@ -34,7 +34,9 @@ export function SessionRow({
               )
             : formatDuration(session.start_timestamp, ended)
     const relative = getRelativeTime(session.start_timestamp)
-    const { label, extraDays } = formatTimeRange(session.start_timestamp, ended)
+    const { label, extraDays } = ended
+        ? formatTimeRange(session.start_timestamp, ended)
+        : { label: '', extraDays: 0 }
     const resolvedMemberName =
         member?.full_name ??
         (member ? `${member.first_name} ${member.last_name}` : undefined) ??
@@ -44,7 +46,10 @@ export function SessionRow({
         <button
             type="button"
             onClick={onPress}
-            className="w-full rounded-md border border-neutral-200 bg-white px-4 py-3 text-left hover:bg-neutral-50"
+            className={
+                'w-full rounded-md bg-white px-4 py-3 text-left hover:bg-neutral-50 border ' +
+                (isActive ? 'border-red-500' : 'border-neutral-200')
+            }
         >
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -58,10 +63,16 @@ export function SessionRow({
                             {resolvedMemberName}
                         </div>
                     ) : null}
-                    <div className="text-xs text-neutral-500">
-                        {label}
-                        {extraDays > 0 ? ` (+${extraDays})` : ''}
-                    </div>
+                    {isActive ? (
+                        <div className="text-xs font-medium text-red-600">
+                            In progress
+                        </div>
+                    ) : (
+                        <div className="text-xs text-neutral-500">
+                            {label}
+                            {extraDays > 0 ? ` (+${extraDays})` : ''}
+                        </div>
+                    )}
                 </div>
                 <div aria-hidden className="text-neutral-400">
                     ›
