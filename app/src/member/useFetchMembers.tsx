@@ -77,7 +77,7 @@ export function useFetchMembers(
 
             const { data, error } = await query
             if (error) throw error
-            console.debug('useFetchMembers', data, error)
+
             return data ?? []
         },
         ...config,

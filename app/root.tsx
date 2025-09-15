@@ -116,6 +116,14 @@ export default function App() {
                                         Campaign Stats
                                     </Link>
                                 </li>
+                                <li>
+                                    <Link
+                                        className="block rounded px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-100"
+                                        to="/members"
+                                    >
+                                        Members
+                                    </Link>
+                                </li>
                             </ul>
                         </nav>
                     </div>

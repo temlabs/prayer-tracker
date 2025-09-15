@@ -285,6 +285,38 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_member_activity: {
+        Row: {
+          is_active: boolean | null
+          last_seen_at: string | null
+          member_id: string | null
+          prayer_campaign_id: string | null
+          total_seconds_prayed: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_members_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_members_prayer_campaign_id_fkey"
+            columns: ["prayer_campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_cumulative_view"
+            referencedColumns: ["campaign_id"]
+          },
+          {
+            foreignKeyName: "campaign_members_prayer_campaign_id_fkey"
+            columns: ["prayer_campaign_id"]
+            isOneToOne: false
+            referencedRelation: "prayer_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       gtrgm_compress: {
