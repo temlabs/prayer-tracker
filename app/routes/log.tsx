@@ -58,6 +58,14 @@ export default function Log() {
         })
     }
 
+    function handleSeeAll() {
+        if (!member && !defaultCampaign) return
+        const params = new URLSearchParams()
+        if (member) params.set('memberId', member.id)
+        if (defaultCampaign) params.set('campaignId', defaultCampaign.id)
+        navigate(`/activity?${params.toString()}`)
+    }
+
     // Recent completed sessions for member
     const { data: recentSessions } = useFetchPrayerSessions(
         member
@@ -120,9 +128,12 @@ export default function Log() {
                 )}
                 {recentSessions && recentSessions.length > 0 ? (
                     <section className="mt-10 space-y-2">
-                        <h2 className="text-sm font-medium text-neutral-700">
-                            Recent sessions
-                        </h2>
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-sm font-medium text-neutral-700">
+                                Recent sessions
+                            </h2>
+                            <LinkButton text="See all" onPress={handleSeeAll} />
+                        </div>
                         {recentSessions.map((s) => (
                             <SessionRow key={s.id} session={s} />
                         ))}
