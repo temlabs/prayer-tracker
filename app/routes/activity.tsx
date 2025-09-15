@@ -390,6 +390,71 @@ export default function Activity() {
                     </div>
                 </div>
             )}
+
+            {showStopFirst && selected && (
+                <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/30 p-4">
+                    <div className="w-full max-w-sm rounded-lg bg-white p-4 shadow-xl">
+                        <h3 className="mb-2 text-base font-semibold">
+                            Session in progress
+                        </h3>
+                        <p className="mb-4 text-sm text-neutral-700">
+                            Stop this session to edit it.
+                        </p>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
+                                onClick={() => {
+                                    setShowStopFirst(false)
+                                    setSelected(null)
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="rounded bg-red-600 px-3 py-1.5 text-sm text-white"
+                                onClick={stopSelectedNow}
+                                disabled={updating}
+                            >
+                                Stop session
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showEdit && selected && (
+                <div className="fixed inset-0 z-30">
+                    {/* Reuse the same modal look */}
+                    <div
+                        className="fixed inset-0 bg-black/30"
+                        onClick={() => {
+                            setShowEdit(false)
+                            setSelected(null)
+                        }}
+                    />
+                    <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center p-4">
+                        <div className="w-full max-w-md rounded-t-2xl bg-white p-4 shadow-xl">
+                            <h3 className="mb-3 text-base font-semibold">
+                                Edit session
+                            </h3>
+                            <p className="mb-3 text-sm text-neutral-600">
+                                Coming soon: full edit form.
+                            </p>
+                            <div className="flex justify-end">
+                                <button
+                                    className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
+                                    onClick={() => {
+                                        setShowEdit(false)
+                                        setSelected(null)
+                                    }}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     )
 }
