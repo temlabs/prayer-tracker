@@ -6,6 +6,8 @@ import {
 } from '@tanstack/react-query'
 import { getSupabaseBrowserClient } from '~/lib/supabase.client'
 import type { Tables, TablesUpdate } from '~/types/database.types'
+import type { InfiniteData } from '@tanstack/react-query'
+import type { JoinedSession } from '~/src/sessions/useInfiniteSessionLog'
 
 type PrayerSession = Tables<'prayer_sessions'>
 
@@ -63,6 +65,30 @@ export function useUpdatePrayerSession(
                     return old.map((s) =>
                         s.id === vars.id ? { ...s, ...vars.changes } : s
                     )
+                }
+            )
+
+            // Also optimistically update Activity's infinite list ("session-log") pages in-place
+            const optimisticEndedAt =
+                (vars.changes.end_timestamp as string | undefined) ??
+                new Date().toISOString()
+            queryClient.setQueriesData<InfiniteData<JoinedSession[], number>>(
+                { queryKey: ['session-log'] },
+                (old) => {
+                    if (!old) return old
+                    return {
+                        pageParams: old.pageParams,
+                        pages: old.pages.map((page) =>
+                            page.map((row) =>
+                                row.id === vars.id
+                                    ? {
+                                          ...row,
+                                          end_timestamp: optimisticEndedAt,
+                                      }
+                                    : row
+                            )
+                        ),
+                    }
                 }
             )
             return { previous } as { previous: [unknown, unknown][] }

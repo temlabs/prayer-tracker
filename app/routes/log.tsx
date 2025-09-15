@@ -1,5 +1,5 @@
 import type { Route } from './+types/log'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { IdentityHeader } from '~/src/components/identityHeader/IdentityHeader'
 
@@ -12,6 +12,7 @@ import { useFetchMemberCampaigns } from '~/src/campaign/useFetchMemberCampaigns'
 import { NoCampaignPlaceholder } from '~/src/components/placeholder/NoCampaignPlaceholder'
 import { useCreatePrayerSession } from '~/src/sessions/useCreatePrayerSession'
 import { SessionRow } from '~/src/sessions/components/sessionRow/SessionRow'
+import { CreateSessionModal } from '~/src/sessions/components/createSessionModal/CreateSessionModal'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Log Prayer' }]
 
@@ -78,6 +79,8 @@ export default function Log() {
             : { limit: 0 }
     )
 
+    const [showCreate, setShowCreate] = useState(false)
+
     return (
         <main className="min-h-[100svh] px-4 py-8">
             <div className="container mx-auto">
@@ -121,7 +124,10 @@ export default function Log() {
                                     onPress={handleStartPraying}
                                 />
                                 <div className="text-center">
-                                    <LinkButton text="Log a past prayer" />
+                                    <LinkButton
+                                        text="Log a past prayer"
+                                        onPress={() => setShowCreate(true)}
+                                    />
                                 </div>
                             </div>
                         )}
@@ -141,6 +147,15 @@ export default function Log() {
                     </section>
                 ) : null}
             </div>
+
+            {showCreate && member && defaultCampaign && (
+                <CreateSessionModal
+                    open={showCreate}
+                    onClose={() => setShowCreate(false)}
+                    member={member}
+                    campaign={defaultCampaign}
+                />
+            )}
         </main>
     )
 }

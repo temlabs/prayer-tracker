@@ -7,6 +7,7 @@ import { useFetchMembers } from '~/src/member/useFetchMembers'
 import { useFetchPrayerCampaigns } from '~/src/campaign/useFetchPrayerCampaigns'
 import type { Tables } from '~/types/database.types'
 import { useUpdatePrayerSession } from '~/src/sessions/useUpdatePrayerSession'
+import { EditSessionModal } from '~/src/sessions/components/editSessionModal/EditSessionModal'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Activity Log' }]
 
@@ -423,37 +424,15 @@ export default function Activity() {
             )}
 
             {showEdit && selected && (
-                <div className="fixed inset-0 z-30">
-                    {/* Reuse the same modal look */}
-                    <div
-                        className="fixed inset-0 bg-black/30"
-                        onClick={() => {
-                            setShowEdit(false)
-                            setSelected(null)
-                        }}
-                    />
-                    <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center p-4">
-                        <div className="w-full max-w-md rounded-t-2xl bg-white p-4 shadow-xl">
-                            <h3 className="mb-3 text-base font-semibold">
-                                Edit session
-                            </h3>
-                            <p className="mb-3 text-sm text-neutral-600">
-                                Coming soon: full edit form.
-                            </p>
-                            <div className="flex justify-end">
-                                <button
-                                    className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
-                                    onClick={() => {
-                                        setShowEdit(false)
-                                        setSelected(null)
-                                    }}
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <EditSessionModal
+                    open={showEdit}
+                    onClose={() => {
+                        setShowEdit(false)
+                        setSelected(null)
+                    }}
+                    session={selected}
+                    campaigns={campaigns}
+                />
             )}
         </main>
     )
