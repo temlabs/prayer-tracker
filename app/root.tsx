@@ -9,7 +9,7 @@ import {
 
 import type { Route } from './+types/root'
 import './app.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -49,10 +49,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
     const [queryClient] = useState(() => new QueryClient())
+    const [isHydrated, setIsHydrated] = useState(false)
+    useEffect(() => {
+        setIsHydrated(true)
+    }, [])
     return (
         <QueryClientProvider client={queryClient}>
             <Outlet />
-            {import.meta.env.DEV && typeof document !== 'undefined' ? (
+            {import.meta.env.DEV && isHydrated ? (
                 <ReactQueryDevtools initialIsOpen={false} />
             ) : null}
         </QueryClientProvider>
