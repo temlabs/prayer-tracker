@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Tables } from '~/types/database.types'
 import { useUpdatePrayerSession } from '~/src/sessions/useUpdatePrayerSession'
+import { useDeletePrayerSession } from '~/src/sessions/useDeletePrayerSession'
 
 type PrayerSession = Tables<'prayer_sessions'>
 type Member = Tables<'members'>
@@ -70,6 +71,8 @@ export function EditSessionModal({
     }, [startIso, endIso])
 
     const { mutate: updateSession, isPending } = useUpdatePrayerSession()
+    const { mutate: deleteSession, isPending: deleting } =
+        useDeletePrayerSession()
 
     function handleSave() {
         if (!session) return
@@ -87,6 +90,18 @@ export function EditSessionModal({
         updateSession(
             { id: session.id, changes },
             { onSuccess: () => onClose() }
+        )
+    }
+
+    function handleDelete() {
+        if (!session) return
+        const ok = window.confirm('Delete this session? This cannot be undone.')
+        if (!ok) return
+        deleteSession(
+            { id: session.id },
+            {
+                onSuccess: () => onClose(),
+            }
         )
     }
 
@@ -152,18 +167,25 @@ export function EditSessionModal({
                     ) : null}
                 </div>
 
-                <div className="mt-4 flex justify-end gap-2">
+                <div className="mt-4 flex justify-between gap-2">
+                    <button
+                        className="rounded border border-red-300 px-3 py-1.5 text-sm text-red-700 disabled:opacity-60"
+                        onClick={handleDelete}
+                        disabled={isPending || deleting}
+                    >
+                        Delete
+                    </button>
                     <button
                         className="rounded border border-neutral-300 px-3 py-1.5 text-sm"
                         onClick={onClose}
-                        disabled={isPending}
+                        disabled={isPending || deleting}
                     >
                         Cancel
                     </button>
                     <button
                         className="rounded bg-blue-600 px-3 py-1.5 text-sm text-white disabled:opacity-60"
                         onClick={handleSave}
-                        disabled={isPending || !!error || isActive}
+                        disabled={isPending || deleting || !!error || isActive}
                     >
                         {isPending ? 'Saving…' : 'Save changes'}
                     </button>

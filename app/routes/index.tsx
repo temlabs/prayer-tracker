@@ -1,4 +1,4 @@
-import type { Route } from './+types/log'
+import type { Route } from './+types/index'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { IdentityHeader } from '~/src/components/identityHeader/IdentityHeader'
@@ -16,7 +16,7 @@ import { CreateSessionModal } from '~/src/sessions/components/createSessionModal
 
 export const meta: Route.MetaFunction = () => [{ title: 'Log Prayer' }]
 
-export default function Log() {
+export default function Index() {
     const navigate = useNavigate()
     const { member, loaded } = useFetchCurrentMember()
     useEffect(() => {
@@ -70,7 +70,6 @@ export default function Log() {
         navigate(`/activity?${params.toString()}`)
     }
 
-    // Recent completed sessions for member
     const { data: recentSessions } = useFetchPrayerSessions(
         member
             ? {

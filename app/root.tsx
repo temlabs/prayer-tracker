@@ -95,7 +95,7 @@ export default function App() {
                                 <li>
                                     <Link
                                         className="block rounded px-3 py-2 hover:bg-neutral-100"
-                                        to="/log"
+                                        to="/"
                                     >
                                         Log Prayer Time
                                     </Link>
