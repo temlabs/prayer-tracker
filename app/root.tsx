@@ -10,6 +10,7 @@ import {
 import type { Route } from './+types/root'
 import './app.css'
 import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -50,12 +51,80 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
     const [queryClient] = useState(() => new QueryClient())
     const [isHydrated, setIsHydrated] = useState(false)
+    const [drawerOpen, setDrawerOpen] = useState(false)
+    const location = useLocation()
     useEffect(() => {
         setIsHydrated(true)
     }, [])
+    useEffect(() => {
+        // close drawer on route change
+        setDrawerOpen(false)
+    }, [location])
     return (
         <QueryClientProvider client={queryClient}>
-            <Outlet />
+            <div className="relative min-h-[100svh]">
+                <button
+                    type="button"
+                    aria-label="Open menu"
+                    className="fixed left-3 top-3 z-40 rounded border border-neutral-300 bg-white/90 px-3 py-1.5 text-sm backdrop-blur"
+                    onClick={() => setDrawerOpen(true)}
+                >
+                    ☰
+                </button>
+
+                {/* Side drawer */}
+                {drawerOpen && (
+                    <div className="fixed inset-0 z-50">
+                        <div
+                            className="absolute inset-0 bg-black/30"
+                            onClick={() => setDrawerOpen(false)}
+                        />
+                        <nav className="absolute left-0 top-0 h-full w-72 bg-white shadow-xl pt-14">
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200">
+                                <span className="text-sm font-semibold">
+                                    Menu
+                                </span>
+                                <button
+                                    className="text-sm underline"
+                                    onClick={() => setDrawerOpen(false)}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                            <ul className="p-2">
+                                <li>
+                                    <Link
+                                        className="block rounded px-3 py-2 hover:bg-neutral-100"
+                                        to="/log"
+                                    >
+                                        Log Prayer Time
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        className="block rounded px-3 py-2 hover:bg-neutral-100"
+                                        to="/activity"
+                                    >
+                                        Activity Log
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        className="block rounded px-3 py-2 hover:bg-neutral-100"
+                                        to="/data"
+                                    >
+                                        Campaign Stats
+                                    </Link>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                )}
+
+                <div className="pt-14">
+                    <Outlet />
+                </div>
+            </div>
             {import.meta.env.DEV && isHydrated ? (
                 <ReactQueryDevtools initialIsOpen={false} />
             ) : null}

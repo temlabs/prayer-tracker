@@ -26,7 +26,7 @@ export default function Data() {
         <main className="min-h-[100svh] px-4 py-4">
             <div className="mb-4 flex items-center justify-between">
                 <h1 className="text-lg font-semibold">
-                    {selected?.name + ' '}Campaign stats
+                    {`'` + selected?.name + `' `}Campaign Stats
                 </h1>
                 {campaigns && campaigns.length > 0 ? (
                     <select

@@ -1,5 +1,5 @@
 import type { Route } from './+types/log'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { IdentityHeader } from '~/src/components/identityHeader/IdentityHeader'
 
@@ -18,7 +18,10 @@ export const meta: Route.MetaFunction = () => [{ title: 'Log Prayer' }]
 
 export default function Log() {
     const navigate = useNavigate()
-    const member = useFetchCurrentMember()
+    const { member, loaded } = useFetchCurrentMember()
+    useEffect(() => {
+        if (loaded && !member) navigate('/identity', { replace: true })
+    }, [member, loaded, navigate])
     const { data: activePrayerSessions } = useFetchPrayerSessions({
         equals: { end_timestamp: null },
     })
