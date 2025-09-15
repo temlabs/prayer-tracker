@@ -69,9 +69,6 @@ export function useUpdatePrayerSession(
             )
 
             // Also optimistically update Activity's infinite list ("session-log") pages in-place
-            const optimisticEndedAt =
-                (vars.changes.end_timestamp as string | undefined) ??
-                new Date().toISOString()
             queryClient.setQueriesData<InfiniteData<JoinedSession[], number>>(
                 { queryKey: ['session-log'] },
                 (old) => {
@@ -81,10 +78,7 @@ export function useUpdatePrayerSession(
                         pages: old.pages.map((page) =>
                             page.map((row) =>
                                 row.id === vars.id
-                                    ? {
-                                          ...row,
-                                          end_timestamp: optimisticEndedAt,
-                                      }
+                                    ? { ...row, ...vars.changes }
                                     : row
                             )
                         ),

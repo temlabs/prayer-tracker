@@ -77,18 +77,21 @@ export type Database = {
           individual_target_hours: number | null
           member_id: string
           prayer_campaign_id: string
+          total_seconds_prayed: number
         }
         Insert: {
           created_at?: string
           individual_target_hours?: number | null
           member_id: string
           prayer_campaign_id: string
+          total_seconds_prayed?: number
         }
         Update: {
           created_at?: string
           individual_target_hours?: number | null
           member_id?: string
           prayer_campaign_id?: string
+          total_seconds_prayed?: number
         }
         Relationships: [
           {
@@ -175,6 +178,7 @@ export type Database = {
           name: string
           start_timestamp: string
           target_hours: number | null
+          total_seconds_prayed: number
           updated_at: string
         }
         Insert: {
@@ -185,6 +189,7 @@ export type Database = {
           name: string
           start_timestamp: string
           target_hours?: number | null
+          total_seconds_prayed?: number
           updated_at?: string
         }
         Update: {
@@ -195,6 +200,7 @@ export type Database = {
           name?: string
           start_timestamp?: string
           target_hours?: number | null
+          total_seconds_prayed?: number
           updated_at?: string
         }
         Relationships: [
