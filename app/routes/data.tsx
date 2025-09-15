@@ -4,6 +4,8 @@ import { useFetchPrayerCampaigns } from '~/src/campaign/useFetchPrayerCampaigns'
 import type { Tables } from '~/types/database.types'
 import { HeadlineFigures } from '~/src/campaign/components/headlineFigures/HeadlineFigures'
 import { NoCampaignsFoundPlaceholder } from '~/src/components/placeholder/NoCampaignsFoundPlaceholder'
+import { useTotalHoursPrayedTimeSeries } from '~/src/campaign/useTotalHoursPrayedTimeSeries'
+import { TotalHoursChart } from '~/src/campaign/components/totalHoursChart/TotalHoursChart'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Data' }]
 
@@ -21,6 +23,13 @@ export default function Data() {
         () => campaigns?.find((c) => c.id === selectedId) ?? firstCampaign,
         [campaigns, selectedId, firstCampaign]
     )
+
+    const { data: series } = useTotalHoursPrayedTimeSeries(
+        selected?.id,
+        Boolean(selected?.id)
+    )
+
+    // Inline chart removed; using TotalHoursChart component instead
 
     return (
         <main className="min-h-[100svh] px-4 py-4">
@@ -50,6 +59,12 @@ export default function Data() {
             ) : selected ? (
                 <div className="space-y-4">
                     <HeadlineFigures campaign={selected} />
+                    {/* {series && selected ? (
+                        <TotalHoursChart
+                            campaign={selected}
+                            campaignTimeSeries={series}
+                        />
+                    ) : null} */}
                 </div>
             ) : null}
         </main>
