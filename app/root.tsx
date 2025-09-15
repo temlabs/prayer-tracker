@@ -66,7 +66,7 @@ export default function App() {
                 <button
                     type="button"
                     aria-label="Open menu"
-                    className="fixed left-3 top-3 z-40 rounded border border-neutral-300 bg-white/90 px-3 py-1.5 text-sm backdrop-blur"
+                    className="fixed left-3 top-3 z-40 rounded border border-neutral-300 bg-white/90 px-3 py-1.5 text-sm backdrop-blur dark:border-neutral-700 dark:bg-neutral-900/70 dark:text-neutral-100"
                     onClick={() => setDrawerOpen(true)}
                 >
                     ☰
@@ -79,13 +79,13 @@ export default function App() {
                             className="absolute inset-0 bg-black/30"
                             onClick={() => setDrawerOpen(false)}
                         />
-                        <nav className="absolute left-0 top-0 h-full w-72 bg-white shadow-xl pt-14">
-                            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200">
+                        <nav className="absolute left-0 top-0 h-full w-72 bg-white shadow-xl pt-14 dark:bg-neutral-900 dark:text-neutral-100">
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
                                 <span className="text-sm font-semibold">
                                     Menu
                                 </span>
                                 <button
-                                    className="text-sm underline"
+                                    className="text-sm underline dark:text-neutral-200"
                                     onClick={() => setDrawerOpen(false)}
                                 >
                                     Close
@@ -94,7 +94,7 @@ export default function App() {
                             <ul className="p-2">
                                 <li>
                                     <Link
-                                        className="block rounded px-3 py-2 hover:bg-neutral-100"
+                                        className="block rounded px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-100"
                                         to="/"
                                     >
                                         Log Prayer Time
@@ -102,7 +102,7 @@ export default function App() {
                                 </li>
                                 <li>
                                     <Link
-                                        className="block rounded px-3 py-2 hover:bg-neutral-100"
+                                        className="block rounded px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-100"
                                         to="/activity"
                                     >
                                         Activity Log
@@ -110,7 +110,7 @@ export default function App() {
                                 </li>
                                 <li>
                                     <Link
-                                        className="block rounded px-3 py-2 hover:bg-neutral-100"
+                                        className="block rounded px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-100"
                                         to="/data"
                                     >
                                         Campaign Stats

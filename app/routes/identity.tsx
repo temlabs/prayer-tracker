@@ -109,7 +109,7 @@ export default function Identity() {
                                 inputRef.current?.blur()
                             }
                         }}
-                        className="w-full rounded-md border border-neutral-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-md border border-neutral-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
                         aria-autocomplete="list"
                         aria-expanded={isOpen}
                         aria-controls="member-options"
@@ -120,7 +120,7 @@ export default function Identity() {
                             id="member-options"
                             ref={listRef}
                             role="listbox"
-                            className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-md border border-neutral-200 bg-white shadow-lg"
+                            className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-md border border-neutral-200 bg-white shadow-lg dark:border-neutral-800 dark:bg-neutral-900"
                         >
                             {isLoading && (
                                 <li className="px-3 py-2 text-sm text-neutral-500">
@@ -128,12 +128,12 @@ export default function Identity() {
                                 </li>
                             )}
                             {error && (
-                                <li className="px-3 py-2 text-sm text-red-600">
+                                <li className="px-3 py-2 text-sm text-red-600 dark:text-red-400">
                                     Failed to load members
                                 </li>
                             )}
                             {!isLoading && !error && filtered.length === 0 && (
-                                <li className="px-3 py-2 text-sm text-neutral-500">
+                                <li className="px-3 py-2 text-sm text-neutral-500 dark:text-neutral-400">
                                     No matches found
                                 </li>
                             )}
@@ -144,11 +144,11 @@ export default function Identity() {
                                         key={m.id}
                                         role="option"
                                         aria-selected={selected?.id === m.id}
-                                        className="cursor-pointer px-3 py-2 hover:bg-neutral-50"
+                                        className="cursor-pointer px-3 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-800"
                                         onMouseDown={(e) => e.preventDefault()}
                                         onClick={() => handleSelect(m)}
                                     >
-                                        <div className="text-sm font-medium">
+                                        <div className="text-sm font-medium dark:text-neutral-100">
                                             {m.full_name ??
                                                 `${m.first_name} ${m.last_name}`}
                                         </div>
@@ -159,7 +159,7 @@ export default function Identity() {
                 </div>
 
                 {selected && (
-                    <div className="rounded-md border border-neutral-200 p-3 text-sm text-neutral-700">
+                    <div className="rounded-md border border-neutral-200 p-3 text-sm text-neutral-700 dark:border-neutral-800 dark:text-neutral-200">
                         Selected:{' '}
                         <span className="font-medium">
                             {selected.full_name ??
