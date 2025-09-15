@@ -3,12 +3,16 @@ import { useNavigate } from 'react-router'
 import { IdentityHeader } from '~/src/components/identityHeader/identityHeader'
 
 import { useFetchCurrentMember } from '~/src/member/useFetchCurrentMember'
+import { useFetchPrayerSessions } from '~/src/sessions/useFetchPrayerSessions'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Log Prayer' }]
 
 export default function Log() {
     const navigate = useNavigate()
     const member = useFetchCurrentMember()
+    const { data: activePrayerSessions } = useFetchPrayerSessions({
+        equals: { end_timestamp: null },
+    })
 
     function handleChangeMember() {
         try {
