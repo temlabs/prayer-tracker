@@ -11,9 +11,13 @@ export type MemberRowProps = {
 }
 
 function secondsToHoursLabel(seconds: number): string {
-    const hours = seconds / 3600
-    if (hours < 10) return `${Math.round(hours * 10) / 10} h`
-    return `${Math.round(hours)} h`
+    const totalMinutes = Math.round(seconds / 60)
+    const hours = Math.floor(totalMinutes / 60)
+    const minutes = totalMinutes % 60
+
+    if (hours === 0) return `${minutes}m`
+    if (minutes === 0) return `${hours}h`
+    return `${hours}h ${minutes}m`
 }
 
 export function MemberRow({ activity, member }: MemberRowProps) {
