@@ -10,8 +10,8 @@ import type { Tables, TablesInsert } from '~/types/database.types'
 type PrayerSession = Tables<'prayer_sessions'>
 
 export type CreatePrayerSessionInput = {
-    member_id: PrayerSession['member_id']
-    prayer_campaign_id: PrayerSession['prayer_campaign_id']
+    member_id: NonNullable<PrayerSession['member_id']>
+    prayer_campaign_id: NonNullable<PrayerSession['prayer_campaign_id']>
     start_timestamp?: PrayerSession['start_timestamp']
 }
 
@@ -24,8 +24,8 @@ export function useCreatePrayerSession(
         mutationFn: async (input) => {
             const supabase = getSupabaseBrowserClient()
             const payload: TablesInsert<'prayer_sessions'> = {
-                member_id: input.member_id ?? null,
-                prayer_campaign_id: input.prayer_campaign_id ?? null,
+                member_id: input.member_id,
+                prayer_campaign_id: input.prayer_campaign_id,
                 start_timestamp:
                     input.start_timestamp ?? new Date().toISOString(),
                 end_timestamp: null,

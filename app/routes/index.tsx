@@ -22,9 +22,11 @@ export default function Index() {
     useEffect(() => {
         if (loaded && !member) navigate('/identity', { replace: true })
     }, [member, loaded, navigate])
-    const { data: activePrayerSessions } = useFetchPrayerSessions({
-        equals: { end_timestamp: null },
-    })
+    const { data: activePrayerSessions } = useFetchPrayerSessions(
+        member
+            ? { equals: { member_id: member.id, end_timestamp: null } }
+            : { limit: 0 }
+    )
     const nowIso = useMemo(() => new Date().toISOString(), [])
     const memberCampaignArgs = useMemo(
         () =>
@@ -43,6 +45,7 @@ export default function Index() {
         memberCampaignArgs ?? ({ member_id: '' } as any),
         { enabled: !!memberCampaignArgs }
     )
+
     const defaultCampaign = memberCampaigns?.[0]?.campaign
     const currentCampaignName = defaultCampaign?.name
 
@@ -82,7 +85,7 @@ export default function Index() {
     )
 
     const [showCreate, setShowCreate] = useState(false)
-
+    console.log('activePrayerSessions', activePrayerSessions)
     return (
         <main className="min-h-[100svh] px-4 py-8">
             <div className="container mx-auto">
