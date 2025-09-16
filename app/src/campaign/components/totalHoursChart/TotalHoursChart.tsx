@@ -93,6 +93,7 @@ export function TotalHoursChart({
                         }}
                         axisLine={{ stroke: isDark ? '#475569' : '#e5e7eb' }}
                         tickLine={{ stroke: isDark ? '#475569' : '#e5e7eb' }}
+
                         // domain={[0, 1000]}
                     />
                     {/* <Line
@@ -126,6 +127,14 @@ export function TotalHoursChart({
                         }}
                         labelStyle={{ color: isDark ? '#e5e7eb' : '#111827' }}
                         itemStyle={{ color: isDark ? '#e5e7eb' : '#111827' }}
+                        labelFormatter={(v) => {
+                            const dt = new Date(v)
+                            return dt.toLocaleDateString(undefined, {
+                                day: 'numeric',
+                                month: 'long',
+                                weekday: 'short',
+                            })
+                        }}
                     />
                     <Legend
                         align="right"
